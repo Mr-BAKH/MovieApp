@@ -3,8 +3,10 @@ import { ChevronLeftIcon } from 'react-native-heroicons/outline'
 import { HeartIcon } from 'react-native-heroicons/solid'
 import { LinearGradient } from 'expo-linear-gradient';
 
+import Loading from '../components/loading'
 import { View, Text, ImageBackground, ScrollView, Platform, TouchableOpacity, SafeAreaView } from 'react-native'
 import Cast from '../components/cast'
+import MovieList from '../components/movieList'
 import React,{useEffect,useState} from 'react'
 import { useRoute, useNavigation } from '@react-navigation/native'
 import { styles, theme } from '../theme/pallet';
@@ -19,6 +21,8 @@ export default function Movie() {
     const navigation = useNavigation();
     const [likebtn, setLikebtn] = useState(false)
     const [cast, setCast] = useState([1,2,3,4,5])
+    const [loading, setloading] = useState(false)
+    const [similarMovies, setSimilarMovies] = useState([1,2,3,4,5])
     const {params:item} = useRoute()
 
     useEffect(()=>{
@@ -31,37 +35,44 @@ export default function Movie() {
      className={`flex-1 bg-neutral-900 `}
     >
      {/* backbutton and movie poster */}
-
-     <ImageBackground
-      source={{uri:'https://imgv3.fotor.com/images/blog-cover-image/part-blurry-image.jpg'}}
-      className={ios}
-      style={{width:wp(100), height:hp(55)}}
-     >
-      <View className='flex-row justify-between px-[10px] w-full'>
-        <TouchableOpacity 
-        style={styles.background} 
-        className='rounded-xl p-1'
-        onPress={()=> navigation.goBack()}
-        >
-         <ChevronLeftIcon size={hp(4.5)} strokeWidth={hp(0.15)} color={'white'} />
-        </TouchableOpacity>
-        <TouchableOpacity 
-        className='rounded-xl p-1'
-        onPress={()=> setLikebtn(!likebtn)}
-        >
-         <HeartIcon size={hp(4.5)} color={likebtn? theme.text :'white'} />
-        </TouchableOpacity>
-      </View>
-      <LinearGradient
-       colors={['transparent', 'rgba(23,23,23,0.4)', 'rgba(23,23,23,1)']}
-       start={{ x: 0.5, y: 0 }}
-       end={{ x: 0.5, y: 0.65 }}
-       style={{ width: wp(100), height: hp(55) }}
+     {
+      loading? (
+        <Loading/>
+      ):(
+        <ImageBackground
+         source={{uri:'https://imgv3.fotor.com/images/blog-cover-image/part-blurry-image.jpg'}}
+         className={ios}
+        style={{width:wp(100), height:hp(55)}}
       >
-      </LinearGradient>
-     </ImageBackground>
+        <View className='flex-row justify-between px-[10px] w-full'>
+          <TouchableOpacity 
+          style={styles.background} 
+          className='rounded-xl p-1'
+          onPress={()=> navigation.goBack()}
+          >
+          <ChevronLeftIcon size={hp(4.5)} strokeWidth={hp(0.15)} color={'white'} />
+          </TouchableOpacity>
+          <TouchableOpacity 
+          className='rounded-xl p-1'
+          onPress={()=> setLikebtn(!likebtn)}
+          >
+          <HeartIcon size={hp(4.5)} color={likebtn? theme.text :'white'} />
+          </TouchableOpacity>
+        </View>
+        <LinearGradient
+        colors={['transparent', 'rgba(23,23,23,0.4)', 'rgba(23,23,23,1)']}
+        start={{ x: 0.5, y: 0 }}
+        end={{ x: 0.5, y: 0.65 }}
+        style={{ width: wp(100), height: hp(55) }}
+        >
+        </LinearGradient>
+       </ImageBackground>
+
+      )
+     }
+
      {/* movie details */}
-     <View style={{marginTop:-(hp(9))}} className='mb-4'>
+     <View style={{marginTop:-(hp(5))}} className='mb-4'>
       <Text 
        style={{fontSize:hp(3)}} 
        className='text-white text-center tracking-wider font-bold'
@@ -105,6 +116,8 @@ export default function Movie() {
      {/* cast */}
      <Cast navigation={navigation} cast={cast}/>
 
+     {/* similar movie */}
+     <MovieList title='Similar Movie' hideSeeAll={true} data={similarMovies}/>
     </ScrollView>
   )
 }

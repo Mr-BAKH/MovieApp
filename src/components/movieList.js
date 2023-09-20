@@ -5,7 +5,7 @@ import { View, Text, TouchableOpacity, ScrollView, Image } from 'react-native'
 import React from 'react'
 import {styles} from '../theme/pallet'
 
-export default function SliceApp({title,data}) {
+export default function SliceApp({title,data,hideSeeAll}) {
 
     let movieName = 'antoney gorbachof'
     const navigation = useNavigation()
@@ -14,9 +14,13 @@ export default function SliceApp({title,data}) {
     <View className='mb-8 space-y-4'>
      <View className='mx-4 flex-row justify-between items-center'>
       <Text style={{fontSize:hp(2)}} className='text-white'>{title}</Text>
-      <TouchableOpacity>
-       <Text style={[styles.text,{fontSize:hp(2)}]}>Sell All</Text>
-      </TouchableOpacity>
+      {
+        !hideSeeAll &&(
+        <TouchableOpacity>
+        <Text style={[styles.text,{fontSize:hp(2)}]}>Sell All</Text>
+        </TouchableOpacity>
+        )
+      }
      </View>
      {/* movie row */}
      <ScrollView
