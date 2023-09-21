@@ -17,7 +17,7 @@ export default function SliceApp({cast,navigation}){
      >
       {
         cast && cast.map((item,index)=>{
-          console.log(item.id)
+          // console.log(item.id)
             return(
                 <TouchableOpacity
                  key={item.id+index}

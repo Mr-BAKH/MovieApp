@@ -25,7 +25,7 @@ export default function Person() {
     setloading(true);
     getPersonDetails(item.id)
     getPersonMovies(item.id)
-    console.log('psersonid',item.id)
+    // console.log('psersonid',item.id)
   },[item])
 
   const getPersonDetails= async(id)=>{

@@ -60,7 +60,7 @@ export default function Home() {
      <View className='flex-row justify-between items-center mx-4' >
       <Bars3CenterLeftIcon size={hp(4)} strokeWidth={hp(0.15)} color={"white"}/>
       <Text style={{fontSize: hp(4)}} className="text-white font-bold">
-       <Text style={styles.text}>M</Text>ovies
+       <Text style={styles.text}>M</Text>ovChee
       </Text>
       <TouchableOpacity
        onPress={()=> navigation.navigate('Search')}
@@ -81,10 +81,10 @@ export default function Home() {
         {trending.length >0 && <TrendingMoive title={'Trending'} data={trending}/>}
 
         {/*upcoming movies row*/}
-        {upcoming.length> 0 && <MovieList title={'Upcoming'} data={upcoming}/>}
+        {upcoming.length> 0 && <MovieList title={'Upcoming'} hideSeeAll={true} data={upcoming}/>}
         
         {/*Toprating movies row*/}
-        {topRated.length>0 && <MovieList title={'Top Rating'} data={topRated}/>}
+        {topRated.length>0 && <MovieList title={'Top Rating'} hideSeeAll={true} data={topRated}/>}
         </ScrollView>
       )
     }

@@ -1,15 +1,16 @@
 {
   "expo": {
-    "name": "App",
-    "slug": "App",
+    "name": "MovChee",
+    "slug": "MovChee",
+    "description": "Don't waste too much time to find a good movie. In this application, we have shown you the right way. Once and for all.",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/appicon.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/start.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "black"
     },
     "assetBundlePatterns": [
       "**/*"
