@@ -10,7 +10,7 @@ import MovieList from '../components/movieList'
 import React,{useEffect,useState} from 'react'
 import { useRoute, useNavigation } from '@react-navigation/native'
 import { styles, theme } from '../theme/pallet';
-
+import {image500,fallbackMoviePoster, fetchSimilarDetails,fetchCreditDetails,fetchMovieDetails} from '../api/moviedb'
 
 
 const ios = Platform.OS === 'ios'? '':'pt-[50px]'
@@ -20,14 +20,58 @@ export default function Movie() {
 
     const navigation = useNavigation();
     const [likebtn, setLikebtn] = useState(false)
-    const [cast, setCast] = useState([1,2,3,4,5])
-    const [loading, setloading] = useState(false)
-    const [similarMovies, setSimilarMovies] = useState([1,2,3,4,5])
+    const [cast, setCast] = useState([])
+    const [loading, setloading] = useState(true)
+    const [similarMovies, setSimilarMovies] = useState([])
+    const [movie, setMovie] = useState({})
     const {params:item} = useRoute()
 
     useEffect(()=>{
-        //cal the movie details api
+      setloading(true)
+      getMovieDetail(item.id)
+      getMovieCredits(item.id)
+      getSimilarMovies(item.id)
     },[item])
+
+    const getMovieDetail = async(id)=>{
+      try{
+        const data = await fetchMovieDetails(id);
+        if(data){
+          // console.log('data from movie Detail', data)
+          setMovie(data)
+          setloading(false)
+        }
+
+      }catch(e){
+        console.log('Error from movie Details:',e)
+      }
+    }
+
+    const getSimilarMovies = async(id)=>{
+      try{
+        const data = await fetchSimilarDetails(id);
+        if(data && data.results){
+          // console.log('Similar', data)
+          setSimilarMovies(data.results)
+          setloading(false)
+        }
+
+      }catch(e){
+        console.log('Error from movie Details:',e)
+      }
+    }
+
+    const getMovieCredits = async(id)=>{
+      try{
+        const data = await fetchCreditDetails(id)
+        // console.log('got credit,',data)
+        if(data && data.cast){
+          setCast(data.cast)
+        }
+      }catch(err){
+        console.log(err)
+      }
+    }
 
   return (
     <ScrollView
@@ -40,7 +84,7 @@ export default function Movie() {
         <Loading/>
       ):(
         <ImageBackground
-         source={{uri:'https://imgv3.fotor.com/images/blog-cover-image/part-blurry-image.jpg'}}
+         source={{uri:image500(movie.poster_path)}|| fallbackMoviePoster }
          className={ios}
         style={{width:wp(100), height:hp(55)}}
       >
@@ -61,8 +105,8 @@ export default function Movie() {
         </View>
         <LinearGradient
         colors={['transparent', 'rgba(23,23,23,0.4)', 'rgba(23,23,23,1)']}
-        start={{ x: 0.5, y: 0 }}
-        end={{ x: 0.5, y: 0.65 }}
+        start={{ x: 0.5, y: 0.2 }}
+        end={{ x: 0.5, y: 0.7 }}
         style={{ width: wp(100), height: hp(55) }}
         >
         </LinearGradient>
@@ -77,47 +121,53 @@ export default function Movie() {
        style={{fontSize:hp(3)}} 
        className='text-white text-center tracking-wider font-bold'
       >
-       {movieName}
+       {movie?.title}
       </Text>
      </View>
+     
      {/* status , relese, runtime */}
-     <Text
-      style={{fontSize:hp(1.8)}}
-      className="text-neutral-400 font-semibold text-base text-center"
-     >Released. 2020 . 170 min
-     </Text>
+     {movie.id?(
+      <Text
+        style={{fontSize:hp(1.8)}}
+        className="text-neutral-400 font-semibold text-base text-center"
+      >{movie?.status} . {movie?.release_date.split('-')[0]} . {movie?.runtime} min
+      </Text>
+     ): null
+    }
 
      {/* genres */}
      <View className='flex-row justify-center mx-4 mb-4 space-x-2'>
-      <Text
-       style={{fontSize:hp(1.8)}}
-       className="text-neutral-400 font-semibold text-base text-center"
-      >Action .
-      </Text>
-      <Text
-       style={{fontSize:hp(1.8)}}
-       className="text-neutral-400 font-semibold text-base text-center"
-      >Thrill .
-      </Text>
-      <Text
-       style={{fontSize:hp(1.8)}}
-       className="text-neutral-400 font-semibold text-base text-center"
-      >Comedy
-      </Text>
+     {
+      movie?.genres?.map((item,index)=>{
+        let showDot = index+1 != movie.genres.length
+        return(
+          <Text
+          key={index}
+          style={{fontSize:hp(1.8)}}
+          className="text-neutral-400 font-semibold text-base text-center"
+          >{item?.name} {showDot?".":null}
+          </Text>
+        )
+      })
+     }
      </View>
 
      {/* description */}
      <Text 
       style={{fontSize:hp(1.8)}}
       className='text-neutral-400 mx-4 tracking-wide'
-     >a;sdkfja;sdkfjal;sdjf;alasdfadddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddsdkjf;asdfja;sdlkfjlkj;jkadjf;aklsdjf;lakjdsf;asidfj;asidjf;alsdjf;ladsjf;alsdjf;ajds;;asdfklja;sdlfkja;sdfj;asdlfja;dj
+     >
+      {
+        movie?.overview
+      }
      </Text>
      
      {/* cast */}
-     <Cast navigation={navigation} cast={cast}/>
+     { cast.length>0 && <Cast navigation={navigation} cast={cast}/>}
 
      {/* similar movie */}
-     <MovieList title='Similar Movie' hideSeeAll={true} data={similarMovies}/>
+     {similarMovies.length>0 && <MovieList title='Similar Movie' hideSeeAll={true} data={similarMovies}/>}
+     
     </ScrollView>
   )
 }

@@ -1,14 +1,16 @@
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
 import { useNavigation } from '@react-navigation/native';
 
+import {image185, fallbackMoviePoster} from '../api/moviedb'
 import { View, Text, TouchableOpacity, ScrollView, Image } from 'react-native'
 import React from 'react'
 import {styles} from '../theme/pallet'
 
-export default function SliceApp({title,data,hideSeeAll}) {
+export default function SliceApp({title, data, hideSeeAll}) {
 
-    let movieName = 'antoney gorbachof'
+  
     const navigation = useNavigation()
+    let itemInput = data;
 
   return (
     <View className='mb-8 space-y-4'>
@@ -29,21 +31,23 @@ export default function SliceApp({title,data,hideSeeAll}) {
       contentContainerStyle={{gap:10, paddingHorizontal:15,}}   
      >
       {
-        data.map((item,index)=>{
+        itemInput.map((item,index)=>{
+          const name = item.title;
+          // console.log(item.id)
             return(
                 <TouchableOpacity
-                 key={index}
-                 onPress={()=> navigation.navigate('Movie',item)}
+                 key={item.id+index}
+                 onPress={()=> navigation.push('Movie',item)}
                 >
                  <View className='space-y-1'>
                   <Image
-                    source={{uri:'https://imgv3.fotor.com/images/blog-cover-image/part-blurry-image.jpg'}}
+                    source={{uri:image185(item.poster_path)|| fallbackMoviePoster}}
                     className='rounded-3xl'
                     resizeMode='cover'
                     style={{width:wp(33), height:hp(22)}}
                   />
                   <Text className='text-neutral-300 ml-1'>
-                    {movieName.length>0 ? movieName.slice(0,20)+'...': movieName}
+                    {name && name.length>0 ? name.slice(0,14)+'...': name}
                   </Text>
                  </View>
                 </TouchableOpacity>

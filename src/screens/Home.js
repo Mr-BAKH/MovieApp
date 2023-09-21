@@ -5,10 +5,11 @@ import { useNavigation } from '@react-navigation/native';
 import { View, Text, SafeAreaView, Platform, ScrollView, TouchableOpacity, FlatList } from 'react-native'
 import { StatusBar } from 'expo-status-bar';
 import { styles } from '../theme/pallet';
-import React,{useState} from 'react'
+import React,{useState, useEffect} from 'react'
 import Loading from '../components/loading'
 import TrendingMoive from '../components/trendingMovies'
 import MovieList from '../components/movieList'
+import { fetchTrendingMovies,fetchTopratedMovies, fetchUpcomingMovies } from '../api/moviedb';
 
 
 const ios = Platform.OS == 'ios';
@@ -18,9 +19,38 @@ export default function Home() {
   const navigation = useNavigation()
 
     const [trending, setTrending] = useState([])
-    const [upcoming, setUpcoming] = useState([1,2,3])
-    const [topRated, setTopRated] = useState([1,2,3])
-    const [loading, setloading] = useState(false)
+    const [upcoming, setUpcoming] = useState([])
+    const [topRated, setTopRated] = useState([])
+    const [loading, setloading] = useState(true)
+
+
+    useEffect(()=>{
+      getTrendingMovies();
+      getUpcomingMovies();
+      getTopRatingMovies();
+    },[])
+
+    const getTrendingMovies = async()=>{
+      const data = await fetchTrendingMovies()
+      if(data && data.results) {
+        setTrending(data.results)
+        setloading(false)
+      }
+    }
+    const getUpcomingMovies = async()=>{
+      const data = await fetchUpcomingMovies()
+      if(data && data.results) {
+        setUpcoming(data.results)
+        setloading(false)
+      }
+    }
+    const getTopRatingMovies = async()=>{
+      const data = await fetchTopratedMovies()
+      if(data && data.results) {
+        setTopRated(data.results)
+        setloading(false)
+      }
+    }
 
   return (
    <View className='flex-1 bg-neutral-800'>
@@ -44,22 +74,20 @@ export default function Home() {
         <Loading/>
       ):(
         <ScrollView
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{paddingBottom:10}}
+         showsVerticalScrollIndicator={false}
+         contentContainerStyle={{paddingBottom:10}}
         >
         {/* Trending movies carousel */}
-        <TrendingMoive title={'Trending'} data={trending}/>
+        {trending.length >0 && <TrendingMoive title={'Trending'} data={trending}/>}
 
         {/*upcoming movies row*/}
-        <MovieList title={'Upcoming'} data={upcoming}/>
-
+        {upcoming.length> 0 && <MovieList title={'Upcoming'} data={upcoming}/>}
+        
         {/*Toprating movies row*/}
-        <MovieList title={'Top Rating'} data={upcoming}/>
-      
+        {topRated.length>0 && <MovieList title={'Top Rating'} data={topRated}/>}
         </ScrollView>
       )
     }
-
    </View>
   )
 }

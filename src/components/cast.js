@@ -1,5 +1,6 @@
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
 
+import {image185, fallbackPersonImage} from '../api/moviedb'
 import { View, Text, ScrollView, TouchableOpacity, Image } from 'react-native'
 import React from 'react'
 
@@ -16,25 +17,27 @@ export default function SliceApp({cast,navigation}){
      >
       {
         cast && cast.map((item,index)=>{
+          console.log(item.id)
             return(
                 <TouchableOpacity
-                 Key={index}
+                 key={item.id+index}
                  className='mr-4 items-center'
-                 onPress={()=> navigation.navigate('Person', personName)}
+                 onPress={()=> navigation.navigate('Person', item)}
                 >
                  <Image
                   className='rounded-full'
                   style={{width:hp(10), height:hp(10)}}
-                  source={{uri:'https://imgv3.fotor.com/images/blog-cover-image/part-blurry-image.jpg'}}
-                 />
+                  // source={{uri:'https://imgv3.fotor.com/images/blog-cover-image/part-blurry-image.jpg'}}
+                  source={{uri:image185(item?.profile_path)|| fallbackPersonImage}}
+                  />
                  <Text className='text-white text-xs mt-1'>
                   {
-                    characterName.length>10 ? characterName.slice(0,10)+'...': characterName
+                    item?.character.length>10 ? item?.character.slice(0,10)+'...': item?.character
                   }
                  </Text>
                  <Text className='text-neutral-400 text-xs mt-1'>
                   {
-                    personName.length>10 ? personName.slice(0,10)+'...': personName
+                    item?.original_name.length>10 ? item?.original_name.slice(0,10)+'...': item?.original_name
                   }
                  </Text>
                 </TouchableOpacity>
